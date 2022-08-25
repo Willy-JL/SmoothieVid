@@ -1,0 +1,160 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SmoothieVid</title>
+</head>
+
+<body style="max-height: 100%; max-width:100%;">
+    <form onsubmit="stabilize();return false" id="options" onkeydown="return event.key != 'Enter';">
+        <div style="display: grid; grid-template-columns: min-content min-content auto; column-gap: 16px; row-gap: 8px;">
+            <label for="input">Input:</label>
+            <input type="file" name="input" id="input" required>
+            <span></span>
+            <label for="crop">Crop:</label>
+            <select name="crop">
+                <option value="0" selected>Borders</option>
+                <option value="1">Compromise</option>
+                <option value="2">No Borders</option>
+            </select>
+            <span>Stabilizing leaves borders: you can keep them (default), compromise (visible with sharp movements) or crop them</span>
+            <label for="shake">Shake:</label>
+            <input type="number" name="shake" min="1" max="10" value="10" required>
+            <span>Shakiness of the input video, 1 to 10, default: 10</span>
+            <label for="accuracy">Accuracy:</label>
+            <input type="number" name="accuracy" min="1" max="15" value="15" required>
+            <span>Stabilization accuracy level, 1 to 15, default: 15</span>
+            <label for="step">Step:</label>
+            <input type="number" name="step" min="1" max="6" value="1" required>
+            <span>Analysis step size, 1 to 6, default: 1</span>
+            <label for="smooth">Smooth:</label>
+            <input type="number" name="smooth" min="0" value="20" required>
+            <span>Frame count for smoothing, default: 20</span>
+            <label for="contrast">Contrast:</label>
+            <input type="number" name="contrast" min="0.0" max="1.0" step="0.1" value="0.3" required>
+            <span>Minimum reference contrast threshold, 0 to 1, default: 0.3</span>
+            <label for="zoom">Zoom:</label>
+            <input type="number" name="zoom" min="-100" max="100" value="-10" required>
+            <span>Zoom effect, can be negative, default: -10</span>
+            <input type="reset" value="Reset">
+            <input type="submit" name="submit" value="Stabilize!">
+            <span></span>
+            <label>Status:</label>
+            <span id="status">Loading...</span>
+            <span id="error"></span>
+        </div>
+    </form>
+    <br>
+    <div style="display: grid; grid-template-columns: auto auto; grid-template-rows: min-content; column-gap: 8px; row-gap: 8px;">
+        <span>Input:</span>
+        <span>Output:</span>
+        <video id="in_preview" style="background-color: black; width: calc(50vw - 12px); height: calc(100vh - 21.2rem);" controls autoplay loop></video>
+        <video id="out_preview" style="background-color: black; width: calc(50vw - 12px); height: calc(100vh - 21.2rem);" controls autoplay loop></video>
+    </div>
+
+    <script crossorigin="anonymous" src="https://unpkg.com/@ffmpeg/ffmpeg/dist/ffmpeg.min.js"></script>
+    <script>
+        let running = false;
+
+        const options = document.getElementById("options");
+        const status = document.getElementById("status");
+        const error = document.getElementById("error");
+        const in_preview = document.getElementById("in_preview");
+        const out_preview = document.getElementById("out_preview");
+
+        in_preview.volume = 0;
+        out_preview.volume = 0;
+        options.input.value = null;
+        options.input.addEventListener("change", function (e) {
+            if (running) {
+                options.submit.value = "Stabilize!";
+                ffmpeg.exit();
+            };
+            in_preview.src = URL.createObjectURL(options.input.files[0]);
+            out_preview.removeAttribute("src");
+            out_preview.load();
+        });
+        options.addEventListener("reset", function (e) {
+            if (running) {
+                options.submit.value = "Stabilize!";
+                ffmpeg.exit();
+            };
+            in_preview.removeAttribute("src");
+            in_preview.load();
+            out_preview.removeAttribute("src");
+            out_preview.load();
+        });
+
+        let progress = "";
+        const { createFFmpeg, fetchFile } = FFmpeg;
+        const ffmpeg = createFFmpeg({
+            log: true,
+            corePath: "https://unpkg.com/@willyjl/ffmpeg.wasm-core-vidstab/dist/ffmpeg-core.js",
+            progress: ({ ratio }) => {
+                status.innerHTML = `${progress}: ${(ratio * 100.0).toFixed(1)}%`;
+            },
+        });
+
+        async function stabilize() {
+            if (running) {
+                options.submit.value = "Stabilize!";
+                ffmpeg.exit();
+                return;
+            };
+            running = true;
+            options.submit.value = "Stop!";
+            status.innerHTML = "Starting...";
+            error.innerHTML = "";
+            try {
+
+                const input = options.input.files[0];
+                const crop = options.crop.value;
+                const shake = options.shake.value;
+                const accuracy = options.accuracy.value;
+                const step = options.step.value;
+                const smooth = options.smooth.value;
+                const contrast = options.contrast.value;
+                const zoom = options.zoom.value;
+
+                out_preview.removeAttribute("src");
+                out_preview.load();
+                if (!ffmpeg.isLoaded()) {
+                    status.innerHTML = "Loading FFmpeg...";
+                    await ffmpeg.load();
+                };
+
+                status.innerHTML = "Reading file...";
+                ffmpeg.FS("writeFile", input.name, await fetchFile(input));
+
+                progress = "Scaling (1/3)";
+                await ffmpeg.run("-i", input.name, "-vf", "scale=trunc((iw*1.15)/2)*2:trunc(ow/a/2)*2", "-pix_fmt", "yuv420p", "scaled.mp4");
+
+                progress = "Analyzing (2/3)";
+                await ffmpeg.run("-i", "scaled.mp4", "-vf", `vidstabdetect=shakiness=${shake}:accuracy=${accuracy}:stepsize=${step}:mincontrast=${contrast}:show=0`, "-f", "null", "-");
+
+                progress = "Transforming (3/3)"
+                await ffmpeg.run("-i", "scaled.mp4", "-vf", `vidstabtransform=smoothing=${smooth}:crop=black:zoom=${zoom}:optzoom=${crop}:interpol=linear,unsharp=5:5:0.8:3:3:0.4`, "output.mp4");
+
+                status.innerHTML = "Loading preview...";
+                const data = ffmpeg.FS("readFile", "output.mp4");
+                out_preview.src = URL.createObjectURL(new Blob([data.buffer], { type: "video/mp4" }));
+                in_preview.load();
+                status.innerHTML = "Ready!";
+
+            } catch (e) {
+                status.innerHTML = "Failed!";
+                error.innerHTML = e;
+            } finally {
+                running = false;
+                options.submit.value = "Stabilize!";
+            }
+        }
+
+        status.innerHTML = "Ready!";
+    </script>
+</body>
+
+</html>
