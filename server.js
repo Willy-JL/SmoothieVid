@@ -8,7 +8,7 @@ app.use((_, res, next) => {
   next();
 });
 
-app.use(express.static('.'));
+app.use(express.static('./www'));
 
 const PORT = process.env.PORT || 8080;
 
