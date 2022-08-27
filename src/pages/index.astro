@@ -9,48 +9,49 @@ import Tooltip from '../components/Tooltip.astro';
 	<Title />
 	<body class=" max-h-full max-w-full m-0">
 		<form onsubmit="stabilize();return false" id="options" onkeydown="return event.key != 'Enter';">
-			<div class="grid auto-cols-min gap-x-16 gap-y-8" style="display: grid; grid-template-columns: min-content min-content auto; column-gap: 16px; row-gap: 8px;">
+			<div class="container grid m-auto lg:px-56 grid gap-x-4 gap-y-2" style="grid-template-columns: min-content min-content min-content min-content min-content min-content;">
 				<label class="text-right" for="input">Input:</label>
+				<span></span>
 				<input class="block w-full text-sm text-slate-500
 				file:mr-4 file:py-2 file:px-4
 				file:rounded-full file:border-0
 				file:text-sm file:font-semibold
-				file:bg-violet-50 file:text-blue-500	
+				file:bg-violet-50 file:text-blue-500
 				hover:file:bg-violet-100 align-text-top" type="file" name="input" id="input" required>
-				<br />
 				<label class="block mt-2 text-sm font-medium text-right text-gray-900 dark:text-gray-400" for="crop">Crop:</label>
+				<Tooltip text="Stabilizing leaves borders: you can keep them (default), compromise (visible with sharp movements) or crop them" icon="ic:round-info" id="crop" />
 				<select name="crop" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500">
 					<option value="0" selected>Borders</option>
 					<option value="1">Compromise</option>
 					<option value="2">No Borders</option>
 				</select>
-				<Tooltip text="Stabilizing leaves borders: you can keep them (default), compromise (visible with sharp movements) or crop them" icon="ic:round-info" id="crop" />
 				<label class="text-center" for="shake" class="text-right">Shake:</label>
-				<input type="number" name="shake" min="1" max="10" value="10" required>
 				<Tooltip text="Shakiness of the input video, 1 to 10, default: 10" icon="ic:round-info" id="shake" />
+				<input type="number" name="shake" min="1" max="10" value="10" required>
 				<label class="text-right w-50" for="accuracy">Accuracy:</label>
+				<Tooltip text="Stabilization accuracy level, 1 to 15, default: 15" icon="ic:round-info" id="accuracy" />
 				<input type="number" name="accuracy" min="1" max="15" value="15" required>
-				<span>Stabilization accuracy level, 1 to 15, default: 15</span>
 				<label class="text-right" for="step">Step:</label>
+				<Tooltip text="Analysis step size, 1 to 6, default: 1" icon="ic:round-info" id="step" />
 				<input type="number" name="step" min="1" max="6" value="1" required>
-				<span>Analysis step size, 1 to 6, default: 1</span>
 				<label class="text-right" for="smooth">Smooth:</label>
+				<Tooltip text="Frame count for smoothing, default: 20" icon="ic:round-info" id="smooth" />
 				<input type="number" name="smooth" min="0" value="20" required>
-				<span>Frame count for smoothing, default: 20</span>
 				<label class="text-right" for="contrast">Contrast:</label>
+				<Tooltip text="Minimum reference contrast threshold, 0 to 1, default: 0.3" icon="ic:round-info" id="contrast" />
 				<input type="number" name="contrast" min="0.0" max="1.0" step="0.1" value="0.3" required>
-				<span>Minimum reference contrast threshold, 0 to 1, default: 0.3</span>
 				<label class="text-right" for="zoom">Zoom:</label>
+				<Tooltip text="Zoom effect, can be negative, default: 0" icon="ic:round-info" id="zoom" />
 				<input type="number" name="zoom" min="-100" max="100" value="0" required>
-				<span>Zoom effect, can be negative, default: 0</span>
-				<input type="reset" value="Reset">
-				<input class="btn block w-full text-slate-500
+			</div>
+			<div class="container text-center m-auto px-6 space-y-8 md:px-12 lg:px-56">
+				<input class="btn text-slate-500" type="reset" value="Reset">
+				<input class="btn text-slate-500
 				mr-4 py-2 px-4
 				rounded-full file:border-0
 				text-sm file:font-semibold
-				bg-blue-200 align-text-top " type="submit" name="submit" value="Stabilize!">
-				<span></span>
-				<label class="text-right">Status:</label>
+				bg-blue-200  " type="submit" name="submit" value="Stabilize!">
+				<div />
 				<span id="message">Loading...</span>
 				<span id="error"></span>
 			</div>
