@@ -1,0 +1,22 @@
+---
+import Icon from 'astro-icon';
+
+export interface Props {
+	text: string;
+    icon: string,
+    id?: string,
+    style?: "light" | "dark"
+}
+
+const { text, icon, id=icon.split(":")[1], style="light" } = Astro.props;
+---
+<button data-tooltip-target={id} data-tooltip-style={style} type="button" class="text-gray-600 focus:outline-none font-medium rounded-lg text-sm text-center w-fit"><Icon name={icon} /></button>
+<div id={id} role="tooltip" class="inline-block absolute invisible z-10 py-2 px-3 text-sm font-medium text-gray-900 bg-white rounded-lg border border-gray-200 shadow-sm opacity-0 tooltip">
+    {text}
+    <div class="tooltip-arrow" data-popper-arrow />
+</div>
+<style>
+    button > svg {
+        height: 1.5rem;
+    }
+</style>

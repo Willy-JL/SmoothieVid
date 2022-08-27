@@ -2,7 +2,7 @@
 import Layout from '../layouts/Layout.astro';
 import Card from '../components/Card.astro';
 import Title from '../components/Title.astro';
-
+import Tooltip from '../components/Tooltip.astro';
 ---
 
 <Layout title="SmoothieVid">
@@ -17,17 +17,17 @@ import Title from '../components/Title.astro';
 				file:text-sm file:font-semibold
 				file:bg-violet-50 file:text-blue-500	
 				hover:file:bg-violet-100 align-text-top" type="file" name="input" id="input" required>
-				<span></span>
-				<label class="text-right" for="crop">Crop:</label>
-				<select name="crop">
+				<br />
+				<label class="block mt-2 text-sm font-medium text-right text-gray-900 dark:text-gray-400" for="crop">Crop:</label>
+				<select name="crop" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500">
 					<option value="0" selected>Borders</option>
 					<option value="1">Compromise</option>
 					<option value="2">No Borders</option>
 				</select>
-				<span>Stabilizing leaves borders: you can keep them (default), compromise (visible with sharp movements) or crop them</span>
+				<Tooltip text="Stabilizing leaves borders: you can keep them (default), compromise (visible with sharp movements) or crop them" icon="ic:round-info" id="crop" />
 				<label class="text-center" for="shake" class="text-right">Shake:</label>
 				<input type="number" name="shake" min="1" max="10" value="10" required>
-				<span>Shakiness of the input video, 1 to 10, default: 10</span>
+				<Tooltip text="Shakiness of the input video, 1 to 10, default: 10" icon="ic:round-info" id="shake" />
 				<label class="text-right w-50" for="accuracy">Accuracy:</label>
 				<input type="number" name="accuracy" min="1" max="15" value="15" required>
 				<span>Stabilization accuracy level, 1 to 15, default: 15</span>
@@ -65,6 +65,7 @@ import Title from '../components/Title.astro';
 		<script crossorigin="anonymous" src="https://unpkg.com/@ffmpeg/ffmpeg/dist/ffmpeg.min.js" />
 		<sciprt src="ssr.mjs" is:inline />
 		<script src="/script.js" is:inline />
+		<script src="../../node_modules/flowbite/dist/flowbite.js" type="module" />
 	</body>
 </Layout>
 
