@@ -59,10 +59,10 @@ import Tooltip from '../components/Tooltip.astro';
 		<div style="display: grid; grid-template-columns: auto auto; grid-template-rows: min-content; column-gap: 8px; row-gap: 8px;">
 			<span class="w-full ml-2">Input:</span>
 			<span>Output:</span>
-			<video class="m-auto" id="in_preview" style="background-color: black; width: calc(50vw - 12px); height: calc(100vh - 21.2rem);" controls autoplay loop></video>
+			<video class="m-auto" id="in_preview_vid" style="background-color: black; width: calc(50vw - 12px); height: calc(100vh - 21.2rem);" controls autoplay loop></video>
+			<img class="m-auto" id="in_preview_img" style="background-color: black; width: calc(50vw - 12px); height: calc(100vh - 21.2rem); object-fit: contain; display: none;" />
 			<video class="m-auto" id="out_preview" style="background-color: black; width: calc(50vw - 12px); height: calc(100vh - 21.2rem);" controls autoplay loop></video>
 		</div>
-		<script src="ssr.mjs" is:inline />
 		<script src="../../node_modules/flowbite/dist/flowbite.js" type="module" />
 		<script crossorigin="anonymous" src="https://unpkg.com/@ffmpeg/ffmpeg/dist/ffmpeg.min.js" />
 		<script src="script.js" is:inline />

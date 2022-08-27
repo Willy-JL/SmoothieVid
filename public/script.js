@@ -1,9 +1,9 @@
-let running = false;
-
 const options = document.getElementById("options");
 const message = document.getElementById("message");
 const error = document.getElementById("error");
-const in_preview = document.getElementById("in_preview");
+const in_preview_vid = document.getElementById("in_preview_vid");
+const in_preview_img = document.getElementById("in_preview_img");
+let in_preview = in_preview_vid;
 const out_preview = document.getElementById("out_preview");
 
 in_preview.volume = 0;
@@ -11,25 +11,58 @@ out_preview.volume = 0;
 options.input.value = null;
 options.input.addEventListener("change", function (e) {
 	if (running) {
-		options.submit.value = "Stabilize!";
-		ffmpeg.exit();
+		stop_ffmpeg();
 	};
-	in_preview.src = URL.createObjectURL(options.input.files[0]);
-	out_preview.removeAttribute("src");
-	out_preview.load();
+	const file = options.input.files[0];
+	if (file.name.toLowerCase().endsWith(".gif")) {
+		set_in_preview_img();
+	} else {
+		set_in_preview_vid();
+	};
+	in_preview.src = URL.createObjectURL(file);
+	refresh_in_preview();
+	reset_out_preview();
+	refresh_out_preview();
 });
 options.addEventListener("reset", function (e) {
 	if (running) {
-		options.submit.value = "Stabilize!";
-		ffmpeg.exit();
+		stop_ffmpeg();
 	};
-	in_preview.removeAttribute("src");
-	in_preview.load();
-	out_preview.removeAttribute("src");
-	out_preview.load();
+	set_in_preview_vid();
+	reset_in_preview();
+	reset_out_preview();
+	refresh_in_preview();
+	refresh_out_preview();
 });
+function set_in_preview_vid() {
+	in_preview_img.style.display = "none";
+	in_preview_vid.style.display = "block";
+	in_preview = in_preview_vid;
+};
+function set_in_preview_img() {
+	in_preview_img.style.display = "block";
+	in_preview_vid.style.display = "none";
+	in_preview = in_preview_img;
+};
+function reset_in_preview() {
+	in_preview_vid.removeAttribute("src");
+	in_preview_img.removeAttribute("src");
+};
+function reset_out_preview() {
+	out_preview.removeAttribute("src");
+};
+function refresh_in_preview() {
+	in_preview_vid.load();
+	const src = in_preview_img.src;
+	in_preview_img.src = "";
+	in_preview_img.src = src;
+};
+function refresh_out_preview() {
+	out_preview.load();
+};
 
 let step_name = "";
+let running = false;
 const { createFFmpeg, fetchFile } = FFmpeg;
 const ffmpeg = createFFmpeg({
 	log: true,
@@ -38,11 +71,14 @@ const ffmpeg = createFFmpeg({
 		message.innerHTML = `${step_name}: ${(ratio * 100.0).toFixed(1)}%`;
 	},
 });
+function stop_ffmpeg() {
+	options.submit.value = "Stabilize!";
+	ffmpeg.exit();
+};
 
 async function stabilize() {
 	if (running) {
-		options.submit.value = "Stabilize!";
-		ffmpeg.exit();
+		stop_ffmpeg();
 		return;
 	};
 	running = true;
@@ -60,8 +96,8 @@ async function stabilize() {
 		const contrast = options.contrast.value;
 		const zoom = options.zoom.value;
 
-		out_preview.removeAttribute("src");
-		out_preview.load();
+		reset_out_preview();
+		refresh_out_preview();
 		if (!ffmpeg.isLoaded()) {
 			message.innerHTML = "Loading FFmpeg...";
 			await ffmpeg.load();
@@ -78,7 +114,7 @@ async function stabilize() {
 			scaled_file = "scaled.mp4";
 			step_name = `Scaling (${current_step += 1}/${total_steps})`;
 			await ffmpeg.run("-i", input.name, "-vf", `scale=trunc((iw*${Math.max(1 - 0.01 * zoom, 1)})/2)*2:trunc(ow/a/2)*2`, "-pix_fmt", "yuv420p", scaled_file);
-		}
+		};
 
 		step_name = `Analyzing (${current_step += 1}/${total_steps})`;
 		await ffmpeg.run("-i", scaled_file, "-vf", `vidstabdetect=shakiness=${shake}:accuracy=${accuracy}:stepsize=${step}:mincontrast=${contrast}:show=0`, "-f", "null", "-");
@@ -89,7 +125,7 @@ async function stabilize() {
 		message.innerHTML = "Loading preview...";
 		const data = ffmpeg.FS("readFile", "output.mp4");
 		out_preview.src = URL.createObjectURL(new Blob([data.buffer], { type: "video/mp4" }));
-		in_preview.load();
+		refresh_in_preview();
 		message.innerHTML = "Ready!";
 
 	} catch (e) {
@@ -98,7 +134,7 @@ async function stabilize() {
 	} finally {
 		running = false;
 		options.submit.value = "Stabilize!";
-	}
-}
+	};
+};
 
 message.innerHTML = "Ready!";
