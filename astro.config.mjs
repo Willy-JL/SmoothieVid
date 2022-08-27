@@ -4,8 +4,6 @@ import node from '@astrojs/node';
 
 // https://astro.build/config
 export default defineConfig({
-  site: "https://willyjl.dev/smoothievid",
-  base: "/smoothievid",
   output: "server",
   adapter: node(),
   integrations: [tailwind()],
