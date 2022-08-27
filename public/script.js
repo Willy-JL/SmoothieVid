@@ -73,7 +73,7 @@ async function stabilize() {
 		let current_step = 0;
 		let total_steps = 2;
 		let scaled_file = input.name;
-		if (zoom !== 0) {
+		if (zoom != 0) {
 			total_steps = 3;
 			scaled_file = "scaled.mp4";
 			step_name = `Scaling (${current_step += 1}/${total_steps})`;
