@@ -1,7 +1,7 @@
 let running = false;
 
 const options = document.getElementById("options");
-const status = document.getElementById("status");
+const message = document.getElementById("message");
 const error = document.getElementById("error");
 const in_preview = document.getElementById("in_preview");
 const out_preview = document.getElementById("out_preview");
@@ -29,13 +29,13 @@ options.addEventListener("reset", function (e) {
 	out_preview.load();
 });
 
-let progress = "";
+let step_name = "";
 const { createFFmpeg, fetchFile } = FFmpeg;
 const ffmpeg = createFFmpeg({
 	log: true,
 	corePath: "https://unpkg.com/@willyjl/ffmpeg.wasm-core-vidstab/dist/ffmpeg-core.js",
 	progress: ({ ratio }) => {
-		status.innerHTML = `${progress}: ${(ratio * 100.0).toFixed(1)}%`;
+		message.innerHTML = `${step_name}: ${(ratio * 100.0).toFixed(1)}%`;
 	},
 });
 
@@ -47,7 +47,7 @@ async function stabilize() {
 	};
 	running = true;
 	options.submit.value = "Stop!";
-	status.innerHTML = "Starting...";
+	message.innerHTML = "Starting...";
 	error.innerHTML = "";
 	try {
 
@@ -63,30 +63,37 @@ async function stabilize() {
 		out_preview.removeAttribute("src");
 		out_preview.load();
 		if (!ffmpeg.isLoaded()) {
-			status.innerHTML = "Loading FFmpeg...";
+			message.innerHTML = "Loading FFmpeg...";
 			await ffmpeg.load();
 		};
 
-		status.innerHTML = "Reading file...";
+		message.innerHTML = "Reading file...";
 		ffmpeg.FS("writeFile", input.name, await fetchFile(input));
 
-		progress = "Scaling (1/3)";
-		await ffmpeg.run("-i", input.name, "-vf", "scale=trunc((iw*1.15)/2)*2:trunc(ow/a/2)*2", "-pix_fmt", "yuv420p", "scaled.mp4");
+		let current_step = 0;
+		let total_steps = 2;
+		let scaled_file = input.name;
+		if (zoom !== 0) {
+			total_steps = 3;
+			scaled_file = "scaled.mp4";
+			step_name = `Scaling (${current_step += 1}/${total_steps})`;
+			await ffmpeg.run("-i", input.name, "-vf", "scale=trunc((iw*1.15)/2)*2:trunc(ow/a/2)*2", "-pix_fmt", "yuv420p", scaled_file);
+		}
 
-		progress = "Analyzing (2/3)";
-		await ffmpeg.run("-i", "scaled.mp4", "-vf", `vidstabdetect=shakiness=${shake}:accuracy=${accuracy}:stepsize=${step}:mincontrast=${contrast}:show=0`, "-f", "null", "-");
+		step_name = `Analyzing (${current_step += 1}/${total_steps})`;
+		await ffmpeg.run("-i", scaled_file, "-vf", `vidstabdetect=shakiness=${shake}:accuracy=${accuracy}:stepsize=${step}:mincontrast=${contrast}:show=0`, "-f", "null", "-");
 
-		progress = "Transforming (3/3)"
-		await ffmpeg.run("-i", "scaled.mp4", "-vf", `vidstabtransform=smoothing=${smooth}:crop=black:zoom=${zoom}:optzoom=${crop}:interpol=linear,unsharp=5:5:0.8:3:3:0.4`, "output.mp4");
+		step_name = `Transforming (${current_step += 1}/${total_steps})`;
+		await ffmpeg.run("-i", scaled_file, "-vf", `vidstabtransform=smoothing=${smooth}:crop=black:zoom=${zoom}:optzoom=${crop}:interpol=linear,unsharp=5:5:0.8:3:3:0.4`, "output.mp4");
 
-		status.innerHTML = "Loading preview...";
+		message.innerHTML = "Loading preview...";
 		const data = ffmpeg.FS("readFile", "output.mp4");
 		out_preview.src = URL.createObjectURL(new Blob([data.buffer], { type: "video/mp4" }));
 		in_preview.load();
-		status.innerHTML = "Ready!";
+		message.innerHTML = "Ready!";
 
 	} catch (e) {
-		status.innerHTML = "Failed!";
+		message.innerHTML = "Failed!";
 		error.innerHTML = e;
 	} finally {
 		running = false;
@@ -94,4 +101,4 @@ async function stabilize() {
 	}
 }
 
-status.innerHTML = "Ready!";
+message.innerHTML = "Ready!";

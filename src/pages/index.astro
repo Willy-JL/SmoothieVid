@@ -41,8 +41,8 @@ import Tooltip from '../components/Tooltip.astro';
 				<input type="number" name="contrast" min="0.0" max="1.0" step="0.1" value="0.3" required>
 				<span>Minimum reference contrast threshold, 0 to 1, default: 0.3</span>
 				<label class="text-right" for="zoom">Zoom:</label>
-				<input type="number" name="zoom" min="-100" max="100" value="-10" required>
-				<span>Zoom effect, can be negative, default: -10</span>
+				<input type="number" name="zoom" min="-100" max="100" value="0" required>
+				<span>Zoom effect, can be negative, default: 0</span>
 				<input type="reset" value="Reset">
 				<input class="btn block w-full text-slate-500
 				mr-4 py-2 px-4
@@ -51,7 +51,7 @@ import Tooltip from '../components/Tooltip.astro';
 				bg-blue-200 align-text-top " type="submit" name="submit" value="Stabilize!">
 				<span></span>
 				<label class="text-right">Status:</label>
-				<span id="status">Loading...</span>
+				<span id="message">Loading...</span>
 				<span id="error"></span>
 			</div>
 		</form>
