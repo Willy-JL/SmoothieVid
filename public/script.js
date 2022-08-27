@@ -73,11 +73,11 @@ async function stabilize() {
 		let current_step = 0;
 		let total_steps = 2;
 		let scaled_file = input.name;
-		if (zoom < 0) {
+		if (zoom < 0 || input.name.toLowerCase().endsWith(".gif")) {
 			total_steps = 3;
 			scaled_file = "scaled.mp4";
 			step_name = `Scaling (${current_step += 1}/${total_steps})`;
-			await ffmpeg.run("-i", input.name, "-vf", `scale=trunc((iw*${1 - 0.01 * zoom})/2)*2:trunc(ow/a/2)*2`, "-pix_fmt", "yuv420p", scaled_file);
+			await ffmpeg.run("-i", input.name, "-vf", `scale=trunc((iw*${Math.max(1 - 0.01 * zoom, 1)})/2)*2:trunc(ow/a/2)*2`, "-pix_fmt", "yuv420p", scaled_file);
 		}
 
 		step_name = `Analyzing (${current_step += 1}/${total_steps})`;
