@@ -1,0 +1,4 @@
+{
+  "extends": "astro/tsconfigs/strict",
+  "typescript.validate.enable": false
+}
