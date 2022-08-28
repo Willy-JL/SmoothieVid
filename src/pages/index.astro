@@ -9,6 +9,7 @@ import Tooltip from '../components/Tooltip.astro';
 	<Title />
 	<body class=" max-h-full max-w-full m-0">
 		<form onsubmit="stabilize();return false" id="options" onkeydown="return event.key != 'Enter';">
+			<div id="no_multithread" style="display: none;" class="container m-auto lg:px-56 text-center">WARNING: Your browser <a href="https://caniuse.com/sharedarraybuffer" class="text-slate-500">doesn't support multithreaded FFmpeg</a>, so processing will be slower and it might freeze the webpage (it's unresponsive but still working in background).<div class="py-4"></div></div>
 			<div class="container grid m-auto lg:px-56 grid gap-x-4 gap-y-2" style="grid-template-columns: min-content min-content min-content min-content min-content min-content;">
 				<label class="text-right" for="input">Input:</label>
 				<span></span>

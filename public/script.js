@@ -63,10 +63,16 @@ function refresh_out_preview() {
 
 let step_name = "";
 let running = false;
+let core = "https://unpkg.com/@willyjl/ffmpeg.wasm-core-vidstab/dist/ffmpeg-core.js";
+if (typeof SharedArrayBuffer === "undefined") {
+	core = "https://unpkg.com/@willyjl/ffmpeg.wasm-core-vidstab-st/dist/ffmpeg-core.js";
+	document.getElementById("no_multithread").style.display = "block";
+};
 const { createFFmpeg, fetchFile } = FFmpeg;
 const ffmpeg = createFFmpeg({
 	log: true,
-	corePath: "https://unpkg.com/@willyjl/ffmpeg.wasm-core-vidstab/dist/ffmpeg-core.js",
+	mainName: "main",
+	corePath: core,
 	progress: ({ ratio }) => {
 		message.innerHTML = `${step_name}: ${(ratio * 100.0).toFixed(1)}%`;
 	},
