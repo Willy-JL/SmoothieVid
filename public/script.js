@@ -1,39 +1,21 @@
 const options = document.getElementById("options");
-const message = document.getElementById("message");
 const error = document.getElementById("error");
 const in_preview_vid = document.getElementById("in_preview_vid");
 const in_preview_img = document.getElementById("in_preview_img");
 let in_preview = in_preview_vid;
 const out_preview = document.getElementById("out_preview");
 
-in_preview.volume = 0;
-out_preview.volume = 0;
-options.input.value = null;
-options.input.addEventListener("change", function (e) {
-	if (running) {
-		stop_ffmpeg();
-	};
-	const file = options.input.files[0];
-	if (file.name.toLowerCase().endsWith(".gif")) {
-		set_in_preview_img();
-	} else {
-		set_in_preview_vid();
-	};
-	in_preview.src = URL.createObjectURL(file);
-	refresh_in_preview();
-	reset_out_preview();
-	refresh_out_preview();
-});
-options.addEventListener("reset", function (e) {
-	if (running) {
-		stop_ffmpeg();
-	};
-	set_in_preview_vid();
-	reset_in_preview();
-	reset_out_preview();
-	refresh_in_preview();
-	refresh_out_preview();
-});
+let step_name = "";
+let loaded = false;
+let running = false;
+let core = "https://unpkg.com/@willyjl/ffmpeg.wasm-core-vidstab/dist/ffmpeg-core.js";
+let singleThread = undefined;
+if (typeof SharedArrayBuffer === "undefined") {
+	core = "https://unpkg.com/@willyjl/ffmpeg.wasm-core-vidstab-st/dist/ffmpeg-core.js";
+	singleThread = "main";
+	document.getElementById("singlethread").style.display = "block";
+};
+
 function set_in_preview_vid() {
 	in_preview_img.style.display = "none";
 	in_preview_vid.style.display = "block";
@@ -60,87 +42,161 @@ function refresh_in_preview() {
 function refresh_out_preview() {
 	out_preview.load();
 };
-
-let step_name = "";
-let running = false;
-let core = "https://unpkg.com/@willyjl/ffmpeg.wasm-core-vidstab/dist/ffmpeg-core.js";
-if (typeof SharedArrayBuffer === "undefined") {
-	core = "https://unpkg.com/@willyjl/ffmpeg.wasm-core-vidstab-st/dist/ffmpeg-core.js";
-	document.getElementById("no_multithread").style.display = "block";
-};
-const { createFFmpeg, fetchFile } = FFmpeg;
-const ffmpeg = createFFmpeg({
-	log: true,
-	mainName: "main",
-	corePath: core,
-	progress: ({ ratio }) => {
-		message.innerHTML = `${step_name}: ${(ratio * 100.0).toFixed(1)}%`;
-	},
-});
 function stop_ffmpeg() {
-	options.submit.value = "Stabilize!";
-	ffmpeg.exit();
+	options.submit.style.setProperty("--hover-text", "'Stabilize!'");
+	options.submit.style.setProperty("--hover-color", "var(--blue)");
+	options.submit.style.setProperty("--hover-light-color", "var(--light-blue)");
+	try {
+		ffmpeg.exit();
+	} catch {};
 };
+function show_error(exc) {
+	options.submit.style.setProperty("--text", "'Failed!'");
+	options.submit.style.setProperty("--color", "var(--pink)");
+	options.submit.style.setProperty("--light-color", "var(--light-pink)");
+	if (exc + "" === "[object Object]") {
+		exc = JSON.stringify(exc);
+	};
+	error.innerHTML = exc;
+	error.style.display = "block";
+};
+
+in_preview.volume = 0;
+out_preview.volume = 0;
+options.input.value = null;
+options.input.addEventListener("change", function (e) {
+	if (running) {
+		stop_ffmpeg();
+	};
+	const file = options.input.files[0];
+	if (file && file.name.toLowerCase().endsWith(".gif")) {
+		set_in_preview_img();
+	} else {
+		set_in_preview_vid();
+	};
+	in_preview.src = URL.createObjectURL(file);
+	refresh_in_preview();
+	reset_out_preview();
+	refresh_out_preview();
+});
+options.addEventListener("reset", function (e) {
+	if (running) {
+		stop_ffmpeg();
+	};
+	set_in_preview_vid();
+	reset_in_preview();
+	reset_out_preview();
+	refresh_in_preview();
+	refresh_out_preview();
+});
 
 async function stabilize() {
+	if (!loaded) {
+		return;
+	};
 	if (running) {
 		stop_ffmpeg();
 		return;
 	};
 	running = true;
-	options.submit.value = "Stop!";
-	message.innerHTML = "Starting...";
+	options.submit.style.setProperty("--text", "'Starting...'");
+	options.submit.style.setProperty("--color", "var(--pink)");
+	options.submit.style.setProperty("--light-color", "var(--light-pink)");
+	options.submit.style.setProperty("--hover-text", "'Stop!'");
+	options.submit.style.setProperty("--hover-color", "var(--pink)");
+	options.submit.style.setProperty("--hover-light-color", "var(--light-pink)");
 	error.innerHTML = "";
+	error.style.display = "none";
 	try {
 
 		const input = options.input.files[0];
-		const crop = options.crop.value;
+		const borders = options.borders.value;
 		const shake = options.shake.value;
 		const accuracy = options.accuracy.value;
 		const step = options.step.value;
 		const smooth = options.smooth.value;
 		const contrast = options.contrast.value;
 		const zoom = options.zoom.value;
-
 		reset_out_preview();
 		refresh_out_preview();
+
 		if (!ffmpeg.isLoaded()) {
-			message.innerHTML = "Loading FFmpeg...";
+			options.submit.style.setProperty("--text", "'Loading...'");
 			await ffmpeg.load();
 		};
 
-		message.innerHTML = "Reading file...";
+		options.submit.style.setProperty("--text", "'Reading...'");
 		ffmpeg.FS("writeFile", input.name, await fetchFile(input));
 
-		let current_step = 0;
-		let total_steps = 2;
 		let scaled_file = input.name;
 		if (zoom < 0 || input.name.toLowerCase().endsWith(".gif")) {
-			total_steps = 3;
 			scaled_file = "scaled.mp4";
-			step_name = `Scaling (${current_step += 1}/${total_steps})`;
+			step_name = "Scale";
 			await ffmpeg.run("-i", input.name, "-vf", `scale=trunc((iw*${Math.max(1 - 0.01 * zoom, 1)})/2)*2:trunc(ow/a/2)*2`, "-pix_fmt", "yuv420p", scaled_file);
+			if (singleThread) {
+				const scaled = ffmpeg.FS("readFile", scaled_file);
+				ffmpeg.exit();
+				await ffmpeg.load();
+				ffmpeg.FS("writeFile", scaled_file, scaled);
+			};
 		};
 
-		step_name = `Analyzing (${current_step += 1}/${total_steps})`;
+		step_name = "Analyze";
 		await ffmpeg.run("-i", scaled_file, "-vf", `vidstabdetect=shakiness=${shake}:accuracy=${accuracy}:stepsize=${step}:mincontrast=${contrast}:show=0`, "-f", "null", "-");
+		if (singleThread) {
+			const scaled = ffmpeg.FS("readFile", scaled_file);
+			const transforms = ffmpeg.FS("readFile", "transforms.rtf");
+			ffmpeg.exit();
+			await ffmpeg.load();
+			ffmpeg.FS("writeFile", scaled_file, scaled);
+			ffmpeg.FS("writeFile", "transforms.rtf", transforms);
+		};
 
-		step_name = `Transforming (${current_step += 1}/${total_steps})`;
-		await ffmpeg.run("-i", scaled_file, "-vf", `vidstabtransform=smoothing=${smooth}:crop=black:zoom=${zoom}:optzoom=${crop}:interpol=linear,unsharp=5:5:0.8:3:3:0.4`, "output.mp4");
+		step_name = "Transform";
+		await ffmpeg.run("-i", scaled_file, "-vf", `vidstabtransform=smoothing=${smooth}:crop=black:zoom=${zoom}:optzoom=${borders}:interpol=linear,unsharp=5:5:0.8:3:3:0.4`, "output.mp4");
 
-		message.innerHTML = "Loading preview...";
+		options.submit.style.setProperty("--text", "'Previewing...'");
 		const data = ffmpeg.FS("readFile", "output.mp4");
+		if (singleThread) {
+			ffmpeg.exit();
+		};
 		out_preview.src = URL.createObjectURL(new Blob([data.buffer], { type: "video/mp4" }));
 		refresh_in_preview();
-		message.innerHTML = "Ready!";
+		options.submit.style.setProperty("--text", "'Stabilize!'");
+		options.submit.style.setProperty("--color", "var(--blue)");
+		options.submit.style.setProperty("--light-color", "var(--light-blue)");
 
-	} catch (e) {
-		message.innerHTML = "Failed!";
-		error.innerHTML = e;
+	} catch (exc) {
+		show_error(exc);
 	} finally {
 		running = false;
-		options.submit.value = "Stabilize!";
+		options.submit.style.setProperty("--hover-text", "'Stabilize!'");
+		options.submit.style.setProperty("--hover-color", "var(--blue)");
+		options.submit.style.setProperty("--hover-light-color", "var(--light-blue)");
 	};
 };
 
-message.innerHTML = "Ready!";
+let createFFmpeg, fetchFile, ffmpeg;
+(async function () {
+	createFFmpeg = FFmpeg.createFFmpeg;
+	fetchFile = FFmpeg.fetchFile;
+	ffmpeg = createFFmpeg({
+		log: true,
+		mainName: singleThread,
+		corePath: core,
+		progress: ({ ratio }) => {
+			options.submit.style.setProperty("--text", `'${step_name}: ${(ratio * 100.0).toFixed(1)}%'`);
+		},
+	});
+	await ffmpeg.load();
+	options.submit.style.setProperty("--text", "'Stabilize!'");
+	options.submit.style.setProperty("--color", "var(--blue)");
+	options.submit.style.setProperty("--light-color", "var(--light-blue)");
+})().catch(function (exc) {
+	show_error(exc);
+}).finally(function () {
+	options.submit.style.setProperty("--hover-text", "'Stabilize!'");
+	options.submit.style.setProperty("--hover-color", "var(--blue)");
+	options.submit.style.setProperty("--hover-light-color", "var(--light-blue)");
+	loaded = true;
+});

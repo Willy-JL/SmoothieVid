@@ -1,0 +1,371 @@
+@import url('https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@700&family=IBM+Plex+Sans:wght@400&family=IBM+Plex+Mono:wght@300&display=swap');
+
+/* Variables */
+:root {
+    --pink: #d02670;
+    --light-pink: #ff7eb6;
+    --blue: #0f62fe;
+    --light-blue: #78a9ff;
+    --purple: #8a3ffc;
+    --light-purple: #be95ff;
+    --warning: #e7ba18;
+    --light-warning: #e6d186;
+    --error: #da1e28;
+    --light-error: #e27177;
+    --back1: #151515;
+    --back2: #262626;
+    --back3: #393939;
+    --back4: #525252;
+    --back5: #6F6F6F;
+    --fore1: #F4F4F4;
+    --fore2: #C6C6C6;
+    --fore3: #A8A8A8;
+    --ff-ibms: 'IBM Plex Sans', sans-serif;
+    --ff-ibmm: 'IBM Plex Mono', sans-serif;
+}
+
+/* Fix sizing values */
+* {
+    box-sizing: border-box;
+}
+
+/* Page wide style */
+body {
+    background-color: var(--back1);
+    color: var(--fore1);
+    font-family: var(--ff-ibms);
+    font-size: 13pt;
+    font-weight: 400;
+}
+
+/* No focus border */
+:focus {
+    outline: 0;
+}
+
+/* Page header */
+.title {
+    padding-top: 28pt;
+    padding-bottom: 42pt;
+    margin: auto;
+    width: fit-content;
+    text-align: center;
+    font-family: var(--ff-ibms);
+}
+.title > img {
+    width: 50pt;
+}
+.title > h1 {
+    font-weight: 700;
+    font-size: 32pt;
+    margin: 0;
+}
+.title > h1 > span:first-child {
+    color: var(--pink);
+}
+.title > h1 > span:last-child {
+    color: var(--blue);
+}
+.title > h3 {
+    font-weight: 400;
+    font-size: 16pt;
+    margin: 0;
+    color: var(--fore2);
+}
+
+/* Warnings and errors */
+.alert {
+    width: fit-content;
+    margin: auto;
+    text-align: center;
+    padding: 12pt 16pt;
+}
+.alert > a {
+    color: var(--back5);
+}
+.alert.warning {
+    color: var(--back2);
+    background-color: var(--warning);
+    border-bottom: 2px solid var(--light-warning);
+}
+.alert.error {
+    color: var(--fore1);
+    background-color: var(--error);
+    border-bottom: 2px solid var(--light-error);
+}
+#singlethread {
+    max-width: 50em;
+    margin-bottom: 24pt;
+}
+#error {
+    margin-top: 24pt;
+}
+
+/* Options grid */
+.options {
+    font-size: 0;
+    margin: auto;
+    width: fit-content;
+    display: grid;
+    grid-template-columns: auto auto;
+    column-gap: 26pt;
+    row-gap: 14pt;
+}
+
+/* Inputs: labels */
+.input-item {
+    font-family: var(--ff-ibmm);
+    font-weight: 300;
+    font-size: 13.5pt;
+    width: calc(12ch + 34pt);
+}
+.input-item > * {
+    font-size: 0;
+}
+.input-item > label {
+    font-family: var(--ff-ibms);
+    font-weight: 400;
+    font-size: 12pt;
+    display: inline-block;
+    padding-bottom: 4pt;
+}
+
+/* Inputs: help tooltips */
+.input-item > .help {
+    position: absolute;
+    margin-top: 0.5pt;
+    margin-left: 3pt;
+}
+.input-item > .help::before {
+    font-family: var(--ff-ibmm);
+    font-weight: 300;
+    font-size: 11pt;
+    content: "(?)";
+    color: var(--fore3);
+}
+.input-item > .help > span {
+    visibility: hidden;
+    opacity: 0;
+    transition: opacity 0.2s;
+    background-color: var(--back3);
+    border-bottom: 2pt solid var(--back5);
+    width: 260pt;
+    text-align: center;
+    padding: 5pt;
+    position: absolute;
+    z-index: 1;
+    bottom: 100%;
+    left: 60%;
+    font-family: var(--ff-ibms);
+    font-weight: 400;
+    font-size: 12pt;
+    margin-left: -135pt;
+}
+.input-item > .help:hover > span {
+    visibility: visible;
+    opacity: 1;
+}
+
+/* Inputs: files */
+.input-file {
+    height: 30pt;
+    /* max-width: 100%; */
+}
+.input-file > label * {
+    font-family: var(--ff-ibms);
+    font-weight: 400;
+    font-size: 12pt;
+    color: var(--fore1);
+}
+.input-file > label > input + span {
+    text-align: center;
+    padding-top : calc((24pt - 1em) / 2);
+    padding-bottom : calc((24pt - 1em) / 2);
+    border: 0;
+    border-radius: 0pt;
+    display: inline-block;
+    width: 100%;
+}
+.input-file > label > input:focus-visible + span {
+    border-bottom: 2pt solid var(--blue) !important;
+}
+.input-file > label > input + span::before {
+    display: block;
+    max-width: 85%;
+    margin: auto;
+    overflow: hidden;
+    white-space: nowrap;
+    text-overflow: ellipsis;
+}
+.input-file > label > input:valid + span::before {
+    content: var(--filename);
+}
+.input-file > label > input:valid + span {
+    background-color: var(--blue);
+    border-bottom: 2px solid var(--light-blue);
+}
+.input-file > label > input:invalid + span::before,
+.input-file > label > input + span:hover::before {
+    content: "Select a file";
+}
+.input-file > label > input:invalid + span,
+.input-file > label > input + span:hover {
+    background-color: var(--pink);
+    border-bottom: 2px solid var(--light-pink);
+}
+.input-file > label > input {
+    position: absolute;
+    cursor: pointer;
+    opacity: 0;
+    height: 0;
+    width: 0;
+}
+
+/* Inputs: radios */
+.input-radio {
+    height: 30pt;
+}
+.input-radio > label {
+    display: inline;
+}
+.input-radio > label:not(:last-child) {
+    margin-right: 2pt;
+}
+.input-radio > label * {
+    font-family: var(--ff-ibms);
+    font-weight: 400;
+    font-size: 12pt;
+}
+.input-radio > label > input + span {
+    background-color: var(--back2);
+    border: 0;
+    border-bottom: 2pt solid var(--back4);
+    color: var(--fore1);
+    text-align: center;
+    padding-top : calc((24pt - 1em) / 2);
+    padding-bottom : calc((24pt - 1em) / 2);
+    width: calc(100% / var(--count) - (var(--count) - 1) * 2pt / var(--count));
+    display: inline-block;
+    height: 100%;
+}
+.input-radio > label > input:focus-visible + span::after {
+    content: '';
+    display: table;
+    width: calc(300% + (var(--count) - 1) * 2pt);
+    height: 2pt;
+    position: relative;
+    bottom: -4pt;
+    left: calc(0pt - (100% + 2pt) * var(--index));
+    background-color: transparent;
+    border-bottom: 2pt solid var(--blue) !important;
+}
+.input-radio > label > input:checked + span {
+    background-color: var(--blue);
+    border-bottom: 2pt solid var(--light-blue);
+}
+.input-radio > label > input {
+    position: absolute;
+    cursor: pointer;
+    opacity: 0;
+    height: 0;
+    width: 0;
+}
+
+/* Inputs: numbers */
+.input-number {
+    height: 30pt;
+}
+.input-number * {
+    font-family: var(--ff-ibmm);
+    font-weight: 300;
+    font-size: 8pt;
+}
+.input-number > input,
+.input-number > div > input {
+    background-color: var(--back2);
+    border: 0;
+    border-bottom: 2pt solid var(--back4);
+    color: var(--fore1);
+}
+.input-number > input:focus-visible {
+    border-bottom: 2pt solid var(--blue);
+}
+.input-number > input[type="number"] {
+    font-size: 14pt;
+    padding-left: 10pt;
+    padding-right: 10pt;
+    width: calc(11ch + 20pt);
+    height: 100%;
+    margin-right: 2pt;
+}
+.input-number > div {
+    display: inline-block;
+    vertical-align: top;
+    width: calc(1ch + 12pt);
+    height: 100%;
+}
+.input-number > div > input[type="button"] {
+    padding-left: 6pt;
+    padding-right: 6pt;
+    width: calc(1ch + 12pt);
+    height: calc(50% - 1pt);
+}
+.input-number > div > input[type="button"]:not(:last-child) {
+    margin-bottom: 2pt;
+}
+.input-number > input[type="number"]::-webkit-outer-spin-button,
+.input-number > input[type="number"]::-webkit-inner-spin-button {
+    -webkit-appearance: none;
+    margin: 0;
+}
+.input-number > input[type=number] {
+  -moz-appearance: textfield;
+}
+.input-number > input[type=number]::placeholder,
+.input-number > input[type=number]::-ms-input-placeholder,
+.input-number > input[type=number]:-ms-input-placeholder {
+    color: var(--back4);
+    opacity: 1;
+}
+
+/* Inputs: buttons */
+.input-button {
+    font-family: var(--ff-ibms);
+    font-weight: 400;
+    font-size: 13pt;
+    height: 30pt;
+    width: 100%;
+    background-color: transparent;
+    border-radius: 0pt;
+    border: 0;
+}
+.input-button:focus-visible {
+    border-bottom: 2pt solid var(--blue) !important;
+}
+.input-button[type="reset"] {
+    color: var(--fore1);
+    background-color: var(--purple);
+    border-bottom: 2px solid var(--light-purple);
+}
+.input-button[type="submit"] {
+    --text: 'Loading...';
+    --color: var(--pink);
+    --light-color: var(--light-pink);
+    --hover-text: 'Loading...';
+    --hover-color: var(--pink);
+    --hover-light-color: var(--light-pink);
+    color: transparent;
+    background-color: var(--color);
+    border-bottom: 2px solid var(--light-color);
+}
+.input-button[type="submit"]:hover {
+    background-color: var(--hover-color);
+    border-bottom: 2px solid var(--hover-light-color);
+}
+.input-button[type="submit"]::before {
+    color: var(--fore1);
+    content: var(--text);
+}
+.input-button[type="submit"]:hover::before {
+    content: var(--hover-text);
+}

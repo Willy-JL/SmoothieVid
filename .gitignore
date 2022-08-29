@@ -1,26 +1,2 @@
-# build output
-.output/
-dist/
-
-# dependencies
 node_modules/
 package-lock.json
-yarn.lock
-yarn-error.log
-
-# logs
-npm-debug.log*
-yarn-debug.log*
-yarn-error.log*
-pnpm-debug.log*
-
-
-# environment variables
-.env
-.env.production
-
-# macOS-specific files
-.DS_Store
-
-# Local Netlify folder
-.netlify

@@ -1,5 +1,4 @@
-import express from 'express';
-import { handler as ssrHandler } from './dist/server/entry.mjs';
+const express = require('express');
 
 const app = express();
 const port = process.env.PORT || 3000
@@ -11,8 +10,7 @@ app.use((_, res, next) => {
   next();
 });
 
-app.use(express.static('dist/client/'));
-app.use(ssrHandler);
+app.use(express.static('public'));
 
 app.listen(port, () => {
   console.log(`Server listening on http://localhost:${port}...`);
