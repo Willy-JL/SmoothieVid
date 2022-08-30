@@ -21,6 +21,9 @@
     </div>
     <form class="main" onsubmit="try { stabilize(); } finally { return false; };" id="options" onkeydown="return event.key != 'Enter';">
 
+        <video class="preview" id="in_preview_vid" title="Input" autoplay loop></video>
+        <img class="preview" id="in_preview_img" title="Input" style="display: none;">
+
         <div class="options">
             <div class="input-item">
                 <label for="input">Input</label>
@@ -147,10 +150,7 @@
             <div class="alert error" id="error" style="display: none;"></div>
         </div>
 
-        <video class="preview" id="in_preview_vid" autoplay loop></video>
-        <img class="preview" id="in_preview_img" style="display: none;">
-
-        <video class="preview" id="out_preview" autoplay loop></video>
+        <video class="preview" id="out_preview" title="Output" autoplay loop></video>
 
     </form>
     <script crossorigin="anonymous" src="https://unpkg.com/@ffmpeg/ffmpeg/dist/ffmpeg.min.js"></script>
