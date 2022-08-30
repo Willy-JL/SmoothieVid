@@ -143,8 +143,9 @@ async function stabilize() {
 			scaled_file = "scaled.mp4";
 			step_name = "Scale";
 			await ffmpeg.run("-i", input.name, "-vf", `scale=trunc((iw*${Math.max(1 - 0.01 * zoom, 1)})/2)*2:trunc(ow/a/2)*2`, "-pix_fmt", "yuv420p", scaled_file);
+			reset_in_preview();
 			set_in_preview_vid();
-			set_in_preview(URL.createObjectURL(ffmpeg.FS("readFile", scaled_file)))
+			set_in_preview(URL.createObjectURL(new Blob([ffmpeg.FS("readFile", scaled_file).buffer])));
 			if (singleThread) {
 				const scaled = ffmpeg.FS("readFile", scaled_file);
 				ffmpeg.exit();
