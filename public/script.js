@@ -26,13 +26,6 @@ function set_in_preview_img() {
 	in_preview_vid.style.display = "none";
 	in_preview = in_preview_img;
 };
-function reset_in_preview() {
-	in_preview_vid.removeAttribute("src");
-	in_preview_img.removeAttribute("src");
-};
-function reset_out_preview() {
-	out_preview.removeAttribute("src");
-};
 function refresh_in_preview() {
 	in_preview_vid.load();
 	const src = in_preview_img.src;
@@ -41,6 +34,28 @@ function refresh_in_preview() {
 };
 function refresh_out_preview() {
 	out_preview.load();
+};
+function reset_in_preview() {
+	in_preview_vid.removeAttribute("src");
+	in_preview_img.removeAttribute("src");
+	in_preview_vid.style.removeProperty("background-color");
+	in_preview_img.style.removeProperty("background-color");
+	refresh_in_preview();
+};
+function reset_out_preview() {
+	out_preview.removeAttribute("src");
+	out_preview.style.removeProperty("background-color");
+	refresh_out_preview();
+};
+function set_in_preview(src) {
+	in_preview.src = src;
+	in_preview.style.backgroundColor = "transparent";
+	refresh_in_preview();
+};
+function set_out_preview(src) {
+	out_preview.src = src;
+	out_preview.style.backgroundColor = "transparent";
+	refresh_out_preview();
 };
 function stop_ffmpeg() {
 	options.submit.style.setProperty("--hover-text", "'Stabilize!'");
@@ -74,10 +89,8 @@ options.input.addEventListener("change", function (e) {
 	} else {
 		set_in_preview_vid();
 	};
-	in_preview.src = URL.createObjectURL(file);
-	refresh_in_preview();
+	set_in_preview(URL.createObjectURL(file));
 	reset_out_preview();
-	refresh_out_preview();
 });
 options.addEventListener("reset", function (e) {
 	if (running) {
@@ -86,8 +99,6 @@ options.addEventListener("reset", function (e) {
 	set_in_preview_vid();
 	reset_in_preview();
 	reset_out_preview();
-	refresh_in_preview();
-	refresh_out_preview();
 });
 
 async function stabilize() {
@@ -118,7 +129,6 @@ async function stabilize() {
 		const contrast = options.contrast.value;
 		const zoom = options.zoom.value;
 		reset_out_preview();
-		refresh_out_preview();
 
 		if (!ffmpeg.isLoaded()) {
 			options.submit.style.setProperty("--text", "'Loading...'");
@@ -133,6 +143,8 @@ async function stabilize() {
 			scaled_file = "scaled.mp4";
 			step_name = "Scale";
 			await ffmpeg.run("-i", input.name, "-vf", `scale=trunc((iw*${Math.max(1 - 0.01 * zoom, 1)})/2)*2:trunc(ow/a/2)*2`, "-pix_fmt", "yuv420p", scaled_file);
+			set_in_preview_vid();
+			set_in_preview(URL.createObjectURL(ffmpeg.FS("readFile", scaled_file)))
 			if (singleThread) {
 				const scaled = ffmpeg.FS("readFile", scaled_file);
 				ffmpeg.exit();
@@ -160,7 +172,7 @@ async function stabilize() {
 		if (singleThread) {
 			ffmpeg.exit();
 		};
-		out_preview.src = URL.createObjectURL(new Blob([data.buffer], { type: "video/mp4" }));
+		set_out_preview(URL.createObjectURL(new Blob([data.buffer], { type: "video/mp4" })));
 		refresh_in_preview();
 		options.submit.style.setProperty("--text", "'Stabilize!'");
 		options.submit.style.setProperty("--color", "var(--blue)");

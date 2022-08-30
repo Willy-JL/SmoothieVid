@@ -94,17 +94,26 @@ body {
     border-bottom: 2px solid var(--light-error);
 }
 #singlethread {
-    max-width: 50em;
+    max-width: 42em;
     margin-bottom: 24pt;
 }
 #error {
     margin-top: 24pt;
 }
 
+/* Main layout */
+.main {
+    margin: auto;
+    width: fit-content;
+    display: grid;
+    grid-template-columns: min-content auto auto;
+    grid-template-rows: min-content;
+    column-gap: 24pt;
+}
+
 /* Options grid */
 .options {
     font-size: 0;
-    margin: auto;
     width: fit-content;
     display: grid;
     grid-template-columns: auto auto;
@@ -368,4 +377,15 @@ body {
 }
 .input-button[type="submit"]:hover::before {
     content: var(--hover-text);
+}
+
+/* Previews */
+.preview {
+    background-color: var(--back2);
+    object-fit: contain;
+    max-height: 100%;
+    max-width: 100%;
+    height: 100%;
+    width: 100%;
+    align-self: center;
 }

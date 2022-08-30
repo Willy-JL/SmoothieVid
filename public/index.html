@@ -15,13 +15,13 @@
         <h1><span>Smoothie</span><span>Vid</span></h1>
         <h3>Smoothen and stabilize videos in your browser!</h3>
     </div>
-    <form onsubmit="try { stabilize(); } finally { return false; };" id="options" onkeydown="return event.key != 'Enter';">
-        <div class="alert warning" id="singlethread" style="display: none;">
-            WARNING: Your browser <a href="https://caniuse.com/sharedarraybuffer">doesn't support multithreaded FFmpeg</a>,
-            so processing will be slower and it might freeze the webpage (it's unresponsive but continues working in background).
-        </div>
-        <div class="options">
+    <div class="alert warning" id="singlethread" style="display: none;">
+        WARNING: Your browser <a href="https://caniuse.com/sharedarraybuffer">doesn't support multithreaded FFmpeg</a>,
+        so processing will be slower, it might freeze the webpage and it might not work at all.
+    </div>
+    <form class="main" onsubmit="try { stabilize(); } finally { return false; };" id="options" onkeydown="return event.key != 'Enter';">
 
+        <div class="options">
             <div class="input-item">
                 <label for="input">Input</label>
                 <span class="help">
@@ -144,23 +144,15 @@
             <span></span>
             <input class="input-button" name="reset" type="reset" value="Reset">
             <button class="input-button" name="submit" type="submit" value=""></button>
+            <div class="alert error" id="error" style="display: none;"></div>
         </div>
-        <div class="alert error" id="error" style="display: none;"></div>
+
+        <video class="preview" id="in_preview_vid" autoplay loop></video>
+        <img class="preview" id="in_preview_img" style="display: none;">
+
+        <video class="preview" id="out_preview" autoplay loop></video>
+
     </form>
-    <br>
-    <div
-        style="display: grid; grid-template-columns: auto auto; grid-template-rows: min-content; column-gap: 8px; row-gap: 8px;">
-        <span>Input:</span>
-        <span>Output:</span>
-        <video id="in_preview_vid"
-            style="background-color: black; width: calc(50vw - 12px); height: calc(100vh - 21.2rem);" controls autoplay
-            loop></video>
-        <img id="in_preview_img"
-            style="background-color: black; width: calc(50vw - 12px); height: calc(100vh - 21.2rem); object-fit: contain; display: none;" />
-        <video id="out_preview"
-            style="background-color: black; width: calc(50vw - 12px); height: calc(100vh - 21.2rem);" controls autoplay
-            loop></video>
-    </div>
     <script crossorigin="anonymous" src="https://unpkg.com/@ffmpeg/ffmpeg/dist/ffmpeg.min.js"></script>
     <script src="script.js"></script>
 </body>
