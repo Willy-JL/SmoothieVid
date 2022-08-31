@@ -70,7 +70,7 @@ function show_error(exc) {
 	options.submit.style.setProperty("--color", "var(--pink)");
 	options.submit.style.setProperty("--light-color", "var(--light-pink)");
 	if (exc.toString && exc.toString() === "[object Object]") {
-		exc = `${exc}\n${JSON.stringify(exc)}`;
+		exc = exc.toString() + ": " + JSON.stringify(exc);
 	};
 	error.innerHTML = exc;
 	error.style.display = "block";
