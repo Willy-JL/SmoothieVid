@@ -143,6 +143,7 @@ body {
     grid-template-columns: auto auto;
     column-gap: 26pt;
     row-gap: 14pt;
+    border-bottom: 2pt solid var(--back4);
     background-color: var(--back2);
     padding: 26pt;
 }
@@ -167,9 +168,9 @@ body {
 
 /* Inputs: help tooltips */
 .input-item > .help {
-    position: absolute;
-    margin-top: 0.5pt;
-    margin-left: 3pt;
+    position: relative;
+    top: -0.5pt;
+    left: -6pt;
 }
 .input-item > .help::before {
     font-family: var(--ff-ibmm);
@@ -195,6 +196,7 @@ body {
     font-weight: 400;
     font-size: 12pt;
     margin-left: -135pt;
+    margin-bottom: 16pt;
 }
 .input-item > .help:hover > span {
     visibility: visible;
