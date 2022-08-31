@@ -10,15 +10,15 @@
 </head>
 
 <body>
+
     <div class="title">
         <img src="icon.png" alt="" title="Icon 'cold-drink' provided by freepik.com via flaticon.com">
         <h1><span>Smoothie</span><span>Vid</span></h1>
         <h3>Smoothen and stabilize videos in your browser!</h3>
     </div>
-    <div class="alert warning" id="singlethread" style="display: none;">
-        WARNING: Your browser <a href="https://caniuse.com/sharedarraybuffer">doesn't support multithreaded FFmpeg</a>,
-        so processing will be slow and page will freeze (it's unresponsive but still working in background).
-    </div>
+
+    <div class="alert warning" id="singlethread" style="display: none;"></div>
+
     <form class="main" onsubmit="try { stabilize(); } finally { return false; };" id="options" onkeydown="return event.key != 'Enter';">
 
         <video class="preview" id="in_preview_vid" title="Input" autoplay loop></video>
@@ -157,6 +157,7 @@
 
     <script crossorigin="anonymous" src="https://unpkg.com/@ffmpeg/ffmpeg/dist/ffmpeg.min.js"></script>
     <script src="script.js"></script>
+
 </body>
 
 </html>

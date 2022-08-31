@@ -13,7 +13,10 @@ let singleThread = undefined;
 if (typeof SharedArrayBuffer === "undefined") {
 	core = "https://unpkg.com/@willyjl/ffmpeg.wasm-core-vidstab-st/dist/ffmpeg-core.js";
 	singleThread = "main";
-	document.getElementById("singlethread").style.display = "block";
+	const warning = document.getElementById("singlethread");
+	warning.innerHTML = 'WARNING: Your browser <a href="https://caniuse.com/sharedarraybuffer">doesn\'t support multithreaded FFmpeg</a>,\
+						 so processing will be slow and page will freeze (it\'s unresponsive but still working in background).'
+	warning.style.display = "block";
 };
 
 function set_in_preview_vid() {
