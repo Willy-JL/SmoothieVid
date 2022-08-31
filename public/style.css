@@ -127,7 +127,7 @@ body {
 }
 @media screen and (max-width: 860px) {
     .main > .preview:first-child {
-        display: none;
+        display: none !important;
     }
     .main > .preview {
         flex: none;
