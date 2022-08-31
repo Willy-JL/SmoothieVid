@@ -173,25 +173,34 @@ body {
 
 /* Options grid */
 .options {
-    font-size: 0;
+    font-family: var(--ff-ibmm);
+    font-weight: 300;
+    font-size: 14pt;
     margin: auto;
     width: fit-content;
-    display: grid;
-    grid-template-columns: auto auto;
-    column-gap: 26pt;
-    row-gap: 14pt;
+    height: fit-content;
+    display: flex;
+    flex-direction: row;
+    flex-wrap: wrap;
     border-bottom: 2pt solid var(--back4);
     background-color: var(--back2);
     padding: 26pt;
+    padding-left: 0pt;
+    padding-bottom: 12pt;
+    flex-basis: calc(2 * (11.5ch + 34pt) + 80pt);
+}
+.options > .input-item {
+    flex-basis: calc(11.5ch + 34pt);
+    margin-left: 26pt;
+    margin-bottom: 14pt;
+}
+@media screen and (max-width: 420pt) {
+    .options {
+        flex-basis: calc((11.5ch + 34pt) + 54pt);
+    }
 }
 
 /* Inputs: labels */
-.input-item {
-    font-family: var(--ff-ibmm);
-    font-weight: 300;
-    font-size: 13.5pt;
-    width: calc(12ch + 34pt);
-}
 .input-item > * {
     font-size: 0;
 }
@@ -351,7 +360,7 @@ body {
 .input-number * {
     font-family: var(--ff-ibmm);
     font-weight: 300;
-    font-size: 8pt;
+    font-size: 7pt;
 }
 .input-number > input,
 .input-number > div > button {
