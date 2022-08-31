@@ -17,7 +17,7 @@
     </div>
     <div class="alert warning" id="singlethread" style="display: none;">
         WARNING: Your browser <a href="https://caniuse.com/sharedarraybuffer">doesn't support multithreaded FFmpeg</a>,
-        so processing will be slower, it might freeze the webpage and it might not work at all.
+        so processing will be slow and page will freeze (it's unresponsive but still working in background).
     </div>
     <form class="main" onsubmit="try { stabilize(); } finally { return false; };" id="options" onkeydown="return event.key != 'Enter';">
 

@@ -136,7 +136,8 @@ async function stabilize() {
 		};
 
 		options.submit.style.setProperty("--text", "'Reading...'");
-		ffmpeg.FS("writeFile", input.name, await fetchFile(input));
+		const input_data = await fetchFile(input);
+		ffmpeg.FS("writeFile", input.name, input_data);
 
 		let scaled_file = input.name;
 		if (zoom < 0 || input.name.toLowerCase().endsWith(".gif")) {
@@ -145,35 +146,38 @@ async function stabilize() {
 			await ffmpeg.run("-i", input.name, "-vf", `scale=trunc((iw*${Math.max(1 - 0.01 * zoom, 1)})/2)*2:trunc(ow/a/2)*2`, "-pix_fmt", "yuv420p", scaled_file);
 			reset_in_preview();
 			set_in_preview_vid();
-			set_in_preview(URL.createObjectURL(new Blob([ffmpeg.FS("readFile", scaled_file).buffer])));
+			const scaled_1 = new Blob([ffmpeg.FS("readFile", scaled_file).buffer], { type: "video/mp4" });
+			set_in_preview(URL.createObjectURL(scaled_1));
 			if (singleThread) {
-				const scaled = ffmpeg.FS("readFile", scaled_file);
+				const scaled_1_data = await fetchFile(scaled_1);
 				ffmpeg.exit();
 				await ffmpeg.load();
-				ffmpeg.FS("writeFile", scaled_file, scaled);
+				ffmpeg.FS("writeFile", scaled_file, scaled_1_data);
 			};
 		};
 
 		step_name = "Analyze";
 		await ffmpeg.run("-i", scaled_file, "-vf", `vidstabdetect=shakiness=${shake}:accuracy=${accuracy}:stepsize=${step}:mincontrast=${contrast}:show=0`, "-f", "null", "-");
 		if (singleThread) {
-			const scaled = ffmpeg.FS("readFile", scaled_file);
-			const transforms = ffmpeg.FS("readFile", "transforms.rtf");
+			const scaled_2_data = (scaled_file !== input.name)
+				? await fetchFile(new Blob([ffmpeg.FS("readFile", scaled_file).buffer]))
+				: input_data;
+			const transforms_data = await fetchFile(new Blob([ffmpeg.FS("readFile", "transforms.trf").buffer]));
 			ffmpeg.exit();
 			await ffmpeg.load();
-			ffmpeg.FS("writeFile", scaled_file, scaled);
-			ffmpeg.FS("writeFile", "transforms.rtf", transforms);
+			ffmpeg.FS("writeFile", scaled_file, scaled_2_data);
+			ffmpeg.FS("writeFile", "transforms.trf", transforms_data);
 		};
 
 		step_name = "Transform";
 		await ffmpeg.run("-i", scaled_file, "-vf", `vidstabtransform=smoothing=${smooth}:crop=black:zoom=${zoom}:optzoom=${borders}:interpol=linear,unsharp=5:5:0.8:3:3:0.4`, "output.mp4");
 
 		options.submit.style.setProperty("--text", "'Previewing...'");
-		const data = ffmpeg.FS("readFile", "output.mp4");
+		const output = new Blob([ffmpeg.FS("readFile", "output.mp4").buffer], { type: "video/mp4" });
 		if (singleThread) {
 			ffmpeg.exit();
 		};
-		set_out_preview(URL.createObjectURL(new Blob([data.buffer], { type: "video/mp4" })));
+		set_out_preview(URL.createObjectURL(output));
 		refresh_in_preview();
 		options.submit.style.setProperty("--text", "'Stabilize!'");
 		options.submit.style.setProperty("--color", "var(--blue)");

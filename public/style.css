@@ -82,10 +82,10 @@ body {
     padding: 12pt 16pt;
 }
 .alert > a {
-    color: var(--back6);
+    color: var(--back5);
 }
 .alert.warning {
-    color: var(--back3);
+    color: var(--back2);
     background-color: var(--warning);
     border-bottom: 2px solid var(--light-warning);
 }
