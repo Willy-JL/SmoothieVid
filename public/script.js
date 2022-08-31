@@ -9,13 +9,13 @@ let step_name = "";
 let loaded = false;
 let running = false;
 let core = "https://unpkg.com/@willyjl/ffmpeg.wasm-core-vidstab/dist/ffmpeg-core.js";
-let singleThread = undefined;
+let isSingleThread = undefined;
 if (typeof SharedArrayBuffer === "undefined") {
 	core = "https://unpkg.com/@willyjl/ffmpeg.wasm-core-vidstab-st/dist/ffmpeg-core.js";
-	singleThread = "main";
+	isSingleThread = "main";
 	const warning = document.getElementById("singlethread");
 	warning.innerHTML = 'WARNING: Your browser <a href="https://caniuse.com/sharedarraybuffer">doesn\'t support multithreaded FFmpeg</a>,\
-						 so processing will be slow and page will freeze (it\'s unresponsive but still working in background).'
+						 so processing will be slower, it might freeze the webpage or it might not work at all.'
 	warning.style.display = "block";
 };
 
@@ -68,15 +68,19 @@ function stop_ffmpeg() {
 		ffmpeg.exit();
 	} catch {};
 };
-function show_error(exc) {
+function show_error(exc, msg) {
 	options.submit.style.setProperty("--text", "'Failed!'");
 	options.submit.style.setProperty("--color", "var(--pink)");
 	options.submit.style.setProperty("--light-color", "var(--light-pink)");
 	if (exc.toString && exc.toString() === "[object Object]") {
 		exc = exc.toString() + ": " + JSON.stringify(exc);
 	};
+	if (msg) {
+		exc = msg + ":\n<br>\n" + exc;
+	};
 	error.innerHTML = exc;
 	error.style.display = "block";
+	error.scrollIntoView();
 };
 
 in_preview.volume = 0;
@@ -139,7 +143,7 @@ async function stabilize() {
 		};
 
 		options.submit.style.setProperty("--text", "'Reading...'");
-		const input_data = await fetchFile(input);
+		const input_data = await ffmpeg.fetchFile(input);
 		ffmpeg.FS("writeFile", input.name, input_data);
 
 		let scaled_file = input.name;
@@ -151,8 +155,8 @@ async function stabilize() {
 			set_in_preview_vid();
 			const scaled_1 = new Blob([ffmpeg.FS("readFile", scaled_file).buffer], { type: "video/mp4" });
 			set_in_preview(URL.createObjectURL(scaled_1));
-			if (singleThread) {
-				const scaled_1_data = await fetchFile(scaled_1);
+			if (isSingleThread) {
+				const scaled_1_data = await ffmpeg.fetchFile(scaled_1);
 				ffmpeg.exit();
 				await ffmpeg.load();
 				ffmpeg.FS("writeFile", scaled_file, scaled_1_data);
@@ -161,11 +165,11 @@ async function stabilize() {
 
 		step_name = "Analyze";
 		await ffmpeg.run("-i", scaled_file, "-vf", `vidstabdetect=shakiness=${shake}:accuracy=${accuracy}:stepsize=${step}:mincontrast=${contrast}:show=0`, "-f", "null", "-");
-		if (singleThread) {
+		if (isSingleThread) {
 			const scaled_2_data = (scaled_file !== input.name)
-				? await fetchFile(new Blob([ffmpeg.FS("readFile", scaled_file).buffer]))
+				? await ffmpeg.fetchFile(new Blob([ffmpeg.FS("readFile", scaled_file).buffer]))
 				: input_data;
-			const transforms_data = await fetchFile(new Blob([ffmpeg.FS("readFile", "transforms.trf").buffer]));
+			const transforms_data = await ffmpeg.fetchFile(new Blob([ffmpeg.FS("readFile", "transforms.trf").buffer]));
 			ffmpeg.exit();
 			await ffmpeg.load();
 			ffmpeg.FS("writeFile", scaled_file, scaled_2_data);
@@ -177,7 +181,7 @@ async function stabilize() {
 
 		options.submit.style.setProperty("--text", "'Previewing...'");
 		const output = new Blob([ffmpeg.FS("readFile", "output.mp4").buffer], { type: "video/mp4" });
-		if (singleThread) {
+		if (isSingleThread) {
 			ffmpeg.exit();
 		};
 		set_out_preview(URL.createObjectURL(output));
@@ -187,7 +191,7 @@ async function stabilize() {
 		options.submit.style.setProperty("--light-color", "var(--light-blue)");
 
 	} catch (exc) {
-		show_error(exc);
+		show_error(exc, "Error while processing");
 	} finally {
 		running = false;
 		options.submit.style.setProperty("--hover-text", "'Stabilize!'");
@@ -196,24 +200,28 @@ async function stabilize() {
 	};
 };
 
-let createFFmpeg, fetchFile, ffmpeg;
-(async function () {
-	createFFmpeg = FFmpeg.createFFmpeg;
-	fetchFile = FFmpeg.fetchFile;
-	ffmpeg = createFFmpeg({
+let ffmpeg;
+import("https://unpkg.com/@ffmpeg/ffmpeg/dist/ffmpeg.min.js").then(function () {
+	ffmpeg = FFmpeg.createFFmpeg({
 		log: true,
-		mainName: singleThread,
+		mainName: isSingleThread,
 		corePath: core,
 		progress: ({ ratio }) => {
 			options.submit.style.setProperty("--text", `'${step_name}: ${(ratio * 100.0).toFixed(1)}%'`);
 		},
 	});
-	await ffmpeg.load();
-	options.submit.style.setProperty("--text", "'Stabilize!'");
-	options.submit.style.setProperty("--color", "var(--blue)");
-	options.submit.style.setProperty("--light-color", "var(--light-blue)");
-})().catch(function (exc) {
-	show_error(exc);
+	ffmpeg.fetchFile = FFmpeg.fetchFile;
+	ffmpeg.load().then(function () {
+		options.submit.style.setProperty("--text", "'Stabilize!'");
+		options.submit.style.setProperty("--color", "var(--blue)");
+		options.submit.style.setProperty("--light-color", "var(--light-blue)");
+	}).catch(function (exc) {
+		show_error(exc, "Failed to load ffmpeg.wasm-core");
+	});
+}, function (exc) {
+	show_error(exc, "Failed to import ffmpeg.wasm");
+}).catch(function (exc) {
+	show_error(exc, "Failed to initialize ffmpeg.wasm");
 }).finally(function () {
 	options.submit.style.setProperty("--hover-text", "'Stabilize!'");
 	options.submit.style.setProperty("--hover-color", "var(--blue)");
