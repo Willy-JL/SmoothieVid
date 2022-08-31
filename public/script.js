@@ -48,6 +48,7 @@ function reset_in_preview() {
 function reset_out_preview() {
 	out_preview.removeAttribute("src");
 	out_preview.style.removeProperty("background-color");
+	out_preview.style.removeProperty("display");
 	refresh_out_preview();
 };
 function set_in_preview(src) {
@@ -58,6 +59,8 @@ function set_in_preview(src) {
 function set_out_preview(src) {
 	out_preview.src = src;
 	out_preview.style.backgroundColor = "transparent";
+	out_preview.style.display = "block";
+	out_preview.scrollIntoView();
 	refresh_out_preview();
 };
 function stop_ffmpeg() {

@@ -110,7 +110,6 @@ body {
     height: fit-content;
     max-width: calc(100vw - 54pt);
     column-gap: 26pt;
-    row-gap: 26pt;
     display: flex;
     flex-direction: row;
     flex-wrap: wrap;
@@ -125,11 +124,17 @@ body {
     object-fit: contain;
     flex: 1;
 }
-@media screen and (max-width: 860px) {
-    .main > .preview:first-child {
+@media screen and (max-width: 720pt) {
+    .main {
+        max-width: 100vw;
+    }
+    .main > .preview:first-of-type {
         display: none !important;
     }
-    .main > .preview {
+    .main > .preview:last-of-type {
+        display: none;
+        margin: auto;
+        margin-top: 26pt;
         flex: none;
     }
 }
