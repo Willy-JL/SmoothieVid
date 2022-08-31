@@ -67,8 +67,8 @@
                 <div class="input-number">
                     <input name="shake" type="number" min="1" max="10" value="10" placeholder="1-10" required>
                     <div>
-                        <input type="button" value="+" tabindex="-1" onclick="this.parentElement.previousElementSibling.stepUp()">
-                        <input type="button" value="+" tabindex="-1" onclick="this.parentElement.previousElementSibling.stepDown()">
+                        <button type="button" tabindex="-1" onclick="this.parentElement.previousElementSibling.stepUp()">+</button>
+                        <button type="button" tabindex="-1" onclick="this.parentElement.previousElementSibling.stepDown()">-</button>
                     </div>
                 </div>
             </div>
@@ -81,8 +81,8 @@
                 <div class="input-number">
                     <input name="accuracy" type="number" min="1" max="15" value="15" placeholder="1-15" required>
                     <div>
-                        <input type="button" value="+" tabindex="-1" onclick="this.parentElement.previousElementSibling.stepUp()">
-                        <input type="button" value="+" tabindex="-1" onclick="this.parentElement.previousElementSibling.stepDown()">
+                        <button type="button" tabindex="-1" onclick="this.parentElement.previousElementSibling.stepUp()">+</button>
+                        <button type="button" tabindex="-1" onclick="this.parentElement.previousElementSibling.stepDown()">-</button>
                     </div>
                 </div>
             </div>
@@ -95,8 +95,8 @@
                 <div class="input-number">
                     <input name="step" type="number" min="1" max="6" value="1" placeholder="1-6" required>
                     <div>
-                        <input type="button" value="+" tabindex="-1" onclick="this.parentElement.previousElementSibling.stepUp()">
-                        <input type="button" value="+" tabindex="-1" onclick="this.parentElement.previousElementSibling.stepDown()">
+                        <button type="button" tabindex="-1" onclick="this.parentElement.previousElementSibling.stepUp()">+</button>
+                        <button type="button" tabindex="-1" onclick="this.parentElement.previousElementSibling.stepDown()">-</button>
                     </div>
                 </div>
             </div>
@@ -109,8 +109,8 @@
                 <div class="input-number">
                     <input name="smooth" type="number" min="0" value="20" placeholder="0+" required>
                     <div>
-                        <input type="button" value="+" tabindex="-1" onclick="this.parentElement.previousElementSibling.stepUp()">
-                        <input type="button" value="+" tabindex="-1" onclick="this.parentElement.previousElementSibling.stepDown()">
+                        <button type="button" tabindex="-1" onclick="this.parentElement.previousElementSibling.stepUp()">+</button>
+                        <button type="button" tabindex="-1" onclick="this.parentElement.previousElementSibling.stepDown()">-</button>
                     </div>
                 </div>
             </div>
@@ -123,8 +123,8 @@
                 <div class="input-number">
                     <input name="contrast" type="number" min="0.0" max="1.0" value="0.3" step="0.1" placeholder="0-1" required>
                     <div>
-                        <input type="button" value="+" tabindex="-1" onclick="this.parentElement.previousElementSibling.stepUp()">
-                        <input type="button" value="+" tabindex="-1" onclick="this.parentElement.previousElementSibling.stepDown()">
+                        <button type="button" tabindex="-1" onclick="this.parentElement.previousElementSibling.stepUp()">+</button>
+                        <button type="button" tabindex="-1" onclick="this.parentElement.previousElementSibling.stepDown()">-</button>
                     </div>
                 </div>
             </div>
@@ -137,16 +137,16 @@
                 <div class="input-number">
                     <input name="zoom" type="number" min="-100" max="100" value="0" placeholder="+/-100" required>
                     <div>
-                        <input type="button" value="+" tabindex="-1" onclick="this.parentElement.previousElementSibling.stepUp()">
-                        <input type="button" value="+" tabindex="-1" onclick="this.parentElement.previousElementSibling.stepDown()">
+                        <button type="button" tabindex="-1" onclick="this.parentElement.previousElementSibling.stepUp()">+</button>
+                        <button type="button" tabindex="-1" onclick="this.parentElement.previousElementSibling.stepDown()">-</button>
                     </div>
                 </div>
             </div>
 
             <span></span>
             <span></span>
-            <input class="input-button" name="reset" type="reset" value="Reset">
-            <button class="input-button" name="submit" type="submit" value=""></button>
+            <button class="input-button" name="reset" type="reset">Reset</button>
+            <button class="input-button" name="submit" type="submit"></button>
         </div>
 
         <video class="preview" id="out_preview" title="Output" autoplay loop></video>

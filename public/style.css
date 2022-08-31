@@ -318,7 +318,8 @@ body {
     font-size: 8pt;
 }
 .input-number > input,
-.input-number > div > input {
+.input-number > div > button {
+    border-radius: 0;
     background-color: var(--back3);
     border: 0;
     border-bottom: 2pt solid var(--back5);
@@ -327,7 +328,7 @@ body {
 .input-number > input:focus-visible {
     border-bottom: 2pt solid var(--blue);
 }
-.input-number > input[type="number"] {
+.input-number > input {
     font-size: 14pt;
     padding-left: 10pt;
     padding-right: 10pt;
@@ -341,26 +342,26 @@ body {
     width: calc(1ch + 12pt);
     height: 100%;
 }
-.input-number > div > input[type="button"] {
+.input-number > div > button {
     padding-left: 6pt;
     padding-right: 6pt;
     width: calc(1ch + 12pt);
     height: calc(50% - 1pt);
 }
-.input-number > div > input[type="button"]:not(:last-child) {
+.input-number > div > button:not(:last-child) {
     margin-bottom: 2pt;
 }
-.input-number > input[type="number"]::-webkit-outer-spin-button,
-.input-number > input[type="number"]::-webkit-inner-spin-button {
+.input-number > input::-webkit-outer-spin-button,
+.input-number > input::-webkit-inner-spin-button {
     -webkit-appearance: none;
     margin: 0;
 }
-.input-number > input[type=number] {
+.input-number > input {
   -moz-appearance: textfield;
 }
-.input-number > input[type=number]::placeholder,
-.input-number > input[type=number]::-ms-input-placeholder,
-.input-number > input[type=number]:-ms-input-placeholder {
+.input-number > input::placeholder,
+.input-number > input:-ms-input-placeholder,
+.input-number > input::-ms-input-placeholder {
     color: var(--back5);
     opacity: 1;
 }
