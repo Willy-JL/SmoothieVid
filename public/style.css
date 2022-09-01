@@ -451,3 +451,37 @@ body {
 .input-button[type="submit"]:hover::before {
     content: var(--hover-text);
 }
+
+/* Footer */
+.footer {
+    padding-top: 34pt;
+    padding-bottom: 28pt;
+    margin: auto;
+    width: fit-content;
+    text-align: center;
+}
+.footer > h3 {
+    font-family: var(--ff-ibms);
+    font-weight: 400;
+    font-size: 16pt;
+    color: var(--fore2);
+}
+.footer > h3 > * {
+    font-weight: 700;
+}
+.footer > h3 > *:nth-child(1) {
+    color: transparent;
+    text-shadow: 0 0 0 var(--pink);
+}
+.footer > h3 > *:nth-child(2) {
+    color: var(--blue);
+}
+.footer > h3 > *:nth-child(3) {
+    color: var(--purple);
+}
+.footer > h3 > a {
+    text-decoration: none;
+}
+.footer > h3 > a:hover {
+    text-decoration: underline;
+}
