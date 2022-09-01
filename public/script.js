@@ -69,7 +69,9 @@ window.addEventListener("load", function () {
         refresh_out_preview();
         download.href = src;
         download.style.visibility = "visible";
-        out_preview.scrollIntoView();
+        setTimeout(function () {
+            out_preview.scrollIntoView();
+        }, 100);
     };
     function stop_ffmpeg() {
         options.submit.style.setProperty("--hover-text", "'Stabilize!'");
@@ -91,7 +93,9 @@ window.addEventListener("load", function () {
         };
         error.innerHTML = exc;
         error.style.display = "block";
-        error.scrollIntoView();
+        setTimeout(function () {
+            error.scrollIntoView();
+        }, 100);
     };
 
     in_preview.volume = 0;
