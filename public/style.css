@@ -1,5 +1,3 @@
-@import url('https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@700&family=IBM+Plex+Sans:wght@400&family=IBM+Plex+Mono:wght@300&display=swap');
-
 /* Variables */
 :root {
     --pink: #d02670;
@@ -22,7 +20,7 @@
     --fore2: #C6C6C6;
     --fore3: #A8A8A8;
     --ff-ibms: 'IBM Plex Sans', sans-serif;
-    --ff-ibmm: 'IBM Plex Mono', sans-serif;
+    --ff-ibmm: 'IBM Plex Mono', monospace;
 }
 
 /* Fix sizing values */
@@ -401,7 +399,7 @@ body {
     margin: 0;
 }
 .input-number > input {
-  -moz-appearance: textfield;
+    -moz-appearance: textfield;
 }
 .input-number > input::placeholder,
 .input-number > input:-ms-input-placeholder,

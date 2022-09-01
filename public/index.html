@@ -1,14 +1,18 @@
 <!DOCTYPE html>
 <html lang="en">
-
 <head>
+
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width" />
     <link rel="icon" href="favicon.png" />
-    <link rel="stylesheet" href="style.css">
     <title>SmoothieVid</title>
-</head>
 
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@300&family=IBM+Plex+Sans:wght@400;700&display=swap">
+    <link rel="stylesheet" href="style.css">
+
+</head>
 <body>
 
     <div class="title">
@@ -20,7 +24,6 @@
     <div class="alert warning" id="singlethread" style="display: none;"></div>
 
     <form class="main" onsubmit="try { stabilize(); } finally { return false; };" id="options" onkeydown="return event.key != 'Enter';">
-
         <div class="preview-container">
             <video class="preview" id="in_preview_vid" title="Input" autoplay loop></video>
             <img class="preview" id="in_preview_img" title="Input" style="display: none;">
@@ -158,7 +161,6 @@
             <video class="preview" id="out_preview" title="Output" autoplay loop></video>
             <a class="input-button" type="button" id="download" download="stabilized.mp4">Download!</a>
         </div>
-
     </form>
 
     <div class="alert error" id="error" style="display: none;"></div>
@@ -166,5 +168,4 @@
     <script src="script.js"></script>
 
 </body>
-
 </html>
