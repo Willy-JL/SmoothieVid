@@ -18,7 +18,7 @@ window.addEventListener("load", function () {
         core = "https://unpkg.com/@willyjl/ffmpeg.wasm-core-vidstab-st/dist/ffmpeg-core.js";
         isSingleThread = "main";
         const warning = document.getElementById("singlethread");
-        warning.innerHTML = 'WARNING: Your browser <a href="https://caniuse.com/sharedarraybuffer">doesn\'t support multithreaded FFmpeg</a>,\
+        warning.innerHTML = 'WARNING: Your browser <a href="https://caniuse.com/sharedarraybuffer" target="_blank">doesn\'t support multithreaded FFmpeg</a>,\
                              so processing will be slower, it might freeze the webpage or it might not work at all.'
         warning.style.display = "block";
     };
