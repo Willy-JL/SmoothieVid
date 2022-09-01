@@ -115,20 +115,11 @@ body {
     flex-wrap: wrap;
     align-items: center;
 }
-.preview {
-    object-fit: contain;
-    background-color: var(--back2);
-}
 .main > .preview-container {
     flex: 1;
     font-size: 0;
     position: relative;
     display: grid;
-}
-.main .preview {
-    max-height: calc(100vh - 350pt);
-    max-width: 100%;
-    height: 100%;
 }
 .main > .preview-container:first-of-type > .preview {
     justify-self: right;
@@ -136,44 +127,46 @@ body {
 .main > .preview-container:last-of-type > .preview {
     justify-self: left;
 }
-.main > .preview-container > .download-overlay {
+.main > .preview-container > .preview {
+    max-height: calc(100vh - 350pt);
+    max-width: 100%;
+    height: 100%;
+    object-fit: contain;
+    background-color: var(--back2);
+}
+.main > .preview-container > .input-button {
     visibility: hidden;
     display: none;
     position: absolute;
-    bottom: 0;
-    height: 100%;
-    width: 100%;
-    background-color: rgba(0, 0, 0, 0.5);
-    z-index: 1;
-}
-.main > .preview-container > .preview:hover + .download-overlay,
-.main > .preview-container > .preview + .download-overlay:hover {
-    display: grid;
-}
-.main > .preview-container > .download-overlay > .input-button {
+    bottom: 8pt;
+    left: 8pt;
     width: fit-content;
     height: fit-content;
     padding: 4pt 7pt;
-    max-width: 100%;
-    max-height: 100%;
-    margin: auto;
+    z-index: 1;
     text-decoration: none;
     cursor: default;
+}
+.main > .preview-container > .preview:hover + .input-button,
+.main > .preview-container > .preview + .input-button:hover {
+    display: block;
 }
 @media screen and (max-width: 720pt) {
     .main {
         max-width: 100vw;
     }
-    .main > .preview-container:first-of-type > .preview {
+    .main > .preview-container:first-of-type {
         display: none !important;
     }
     .main > .preview-container:last-of-type {
         margin: auto;
         margin-top: 26pt;
-        flex: none;
-    }
-    .main > .preview-container:last-of-type > .preview {
+        flex-basis: 100%;
         display: none;
+        max-width: fit-content;
+    }
+    .main > .preview-container > .preview {
+        max-height: calc(100vh - 16pt);
     }
 }
 

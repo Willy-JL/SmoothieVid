@@ -6,8 +6,8 @@ window.addEventListener("load", function () {
     const in_preview_img = document.getElementById("in_preview_img");
     let in_preview = in_preview_vid;
     const out_preview = document.getElementById("out_preview");
+    const out_preview_container = out_preview.parentElement;
     const download = document.getElementById("download");
-    const download_overlay = document.getElementById("download_overlay");
 
     let step_name = "";
     let loaded = false;
@@ -52,9 +52,9 @@ window.addEventListener("load", function () {
     function reset_out_preview() {
         out_preview.removeAttribute("src");
         out_preview.style.removeProperty("background-color");
-        out_preview.style.removeProperty("display");
+        out_preview_container.style.removeProperty("display");
         refresh_out_preview();
-        download_overlay.style.visibility = "hidden";
+        download.style.visibility = "hidden";
         download.removeAttribute("src");
     };
     function set_in_preview(src) {
@@ -65,10 +65,10 @@ window.addEventListener("load", function () {
     function set_out_preview(src) {
         out_preview.src = src;
         out_preview.style.backgroundColor = "transparent";
-        out_preview.style.display = "block";
+        out_preview_container.style.display = "grid";
         refresh_out_preview();
         download.href = src;
-        download_overlay.style.visibility = "visible";
+        download.style.visibility = "visible";
         out_preview.scrollIntoView();
     };
     function stop_ffmpeg() {
