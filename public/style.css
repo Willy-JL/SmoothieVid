@@ -188,6 +188,7 @@ body {
 }
 .options > .input-item {
     flex-basis: calc(11.5ch + 34pt);
+    width: calc(11.5ch + 34pt);
     margin-left: 26pt;
     margin-bottom: 14pt;
 }
