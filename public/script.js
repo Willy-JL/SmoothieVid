@@ -125,6 +125,7 @@ window.addEventListener("load", function () {
 
     let last_analysis = null;
     let last_input = null;
+    let last_transform = null;
     stabilize = async function () {
         if (!loaded) {
             return;
@@ -153,6 +154,8 @@ window.addEventListener("load", function () {
             const accuracy = options.accuracy.value;
             const step = options.step.value;
             const contrast = options.contrast.value;
+
+            const last_out_src = out_preview.src;
             reset_out_preview();
 
             if (!ffmpeg.isLoaded()) {
@@ -163,6 +166,7 @@ window.addEventListener("load", function () {
             if (input !== last_input) {
                 last_input = null;
                 last_analysis = null;
+                last_transform = null;
                 options.submit.style.setProperty("--text", "'Reading...'");
                 const input_data = await ffmpeg.fetchFile(input);
                 if (zoom < 0 || input.name.toLowerCase().endsWith(".gif")) {
@@ -186,9 +190,10 @@ window.addEventListener("load", function () {
             };
             last_input = input;
 
-            analysis = `${shake}|${accuracy}|${step}|${contrast}`;
+            const analysis = `${shake}|${accuracy}|${step}|${contrast}`;
             if (analysis !== last_analysis) {
                 last_analysis = null;
+                last_transform = null;
                 step_name = "Analyze";
                 await ffmpeg.run("-i", "scaled.mp4", "-vf", `vidstabdetect=shakiness=${shake}:accuracy=${accuracy}:stepsize=${step}:mincontrast=${contrast}:show=0`, "-f", "null", "-");
                 if (isSingleThread) {
@@ -202,22 +207,29 @@ window.addEventListener("load", function () {
             };
             last_analysis = analysis;
 
-            step_name = "Transform";
-            await ffmpeg.run("-i", "scaled.mp4", "-vf", `vidstabtransform=smoothing=${smooth}:crop=black:zoom=${zoom}:optzoom=${borders}:interpol=linear,unsharp=5:5:0.8:3:3:0.4`, "output.mp4");
-
-            options.submit.style.setProperty("--text", "'Previewing...'");
-            const output = new Blob([ffmpeg.FS("readFile", "output.mp4").buffer], { type: "video/mp4" });
-            ffmpeg.FS("unlink", "output.mp4");
-            if (isSingleThread) {
-                const scaled_3_data = await ffmpeg.fetchFile(new Blob([ffmpeg.FS("readFile", "scaled.mp4").buffer]));
-                const transforms_2_data = await ffmpeg.fetchFile(new Blob([ffmpeg.FS("readFile", "transforms.trf").buffer]));
-                ffmpeg.exit();
-                await ffmpeg.load();
-                ffmpeg.FS("writeFile", "scaled.mp4", scaled_3_data);
-                ffmpeg.FS("writeFile", "transforms.trf", transforms_2_data);
+            const transform = `${smooth}|${zoom}|${borders}`;
+            if (transform !== last_transform) {
+                last_transform = null;
+                step_name = "Transform";
+                await ffmpeg.run("-i", "scaled.mp4", "-vf", `vidstabtransform=smoothing=${smooth}:crop=black:zoom=${zoom}:optzoom=${borders}:interpol=linear,unsharp=5:5:0.8:3:3:0.4`, "output.mp4");
+                options.submit.style.setProperty("--text", "'Previewing...'");
+                const output = new Blob([ffmpeg.FS("readFile", "output.mp4").buffer], { type: "video/mp4" });
+                ffmpeg.FS("unlink", "output.mp4");
+                if (isSingleThread) {
+                    const scaled_3_data = await ffmpeg.fetchFile(new Blob([ffmpeg.FS("readFile", "scaled.mp4").buffer]));
+                    const transforms_2_data = await ffmpeg.fetchFile(new Blob([ffmpeg.FS("readFile", "transforms.trf").buffer]));
+                    ffmpeg.exit();
+                    await ffmpeg.load();
+                    ffmpeg.FS("writeFile", "scaled.mp4", scaled_3_data);
+                    ffmpeg.FS("writeFile", "transforms.trf", transforms_2_data);
+                };
+                set_out_preview(URL.createObjectURL(output));
+            } else {
+                set_out_preview(last_out_src);
             };
-            set_out_preview(URL.createObjectURL(output));
             refresh_in_preview();
+            last_transform = transform;
+
             options.submit.style.setProperty("--text", "'Stabilize!'");
             options.submit.style.setProperty("--color", "var(--blue)");
             options.submit.style.setProperty("--light-color", "var(--light-blue)");
