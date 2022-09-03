@@ -12,6 +12,9 @@ window.addEventListener("load", function () {
     let step_name = "";
     let loaded = false;
     let running = false;
+    let last_analysis = null;
+    let last_input = null;
+    let last_transform = null;
     let core = "https://unpkg.com/@willyjl/ffmpeg.wasm-core-vidstab/dist/ffmpeg-core.js";
     let isSingleThread = undefined;
     if (typeof SharedArrayBuffer === "undefined") {
@@ -74,12 +77,13 @@ window.addEventListener("load", function () {
         }, 100);
     };
     function stop_ffmpeg() {
+        last_analysis = null;
+        last_input = null;
+        last_transform = null;
         options.submit.style.setProperty("--hover-text", "'Stabilize!'");
         options.submit.style.setProperty("--hover-color", "var(--blue)");
         options.submit.style.setProperty("--hover-light-color", "var(--light-blue)");
-        try {
-            ffmpeg.exit();
-        } catch {};
+        ffmpeg.exit();
     };
     function show_error(exc, msg) {
         options.submit.style.setProperty("--text", "'Failed!'");
@@ -123,9 +127,6 @@ window.addEventListener("load", function () {
         reset_out_preview();
     });
 
-    let last_analysis = null;
-    let last_input = null;
-    let last_transform = null;
     stabilize = async function () {
         if (!loaded) {
             return;
