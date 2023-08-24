@@ -15,10 +15,10 @@ window.addEventListener("load", function () {
     let last_analysis = null;
     let last_input = null;
     let last_transform = null;
-    let core = "https://unpkg.com/@willyjl/ffmpeg.wasm-core-vidstab/dist/ffmpeg-core.js";
+    let core = "https://unpkg.com/@willyjl/ffmpeg.wasm-core-vidstab@0.11.4/dist/ffmpeg-core.js";
     let isSingleThread = undefined;
     if (typeof SharedArrayBuffer === "undefined") {
-        core = "https://unpkg.com/@willyjl/ffmpeg.wasm-core-vidstab-st/dist/ffmpeg-core.js";
+        core = "https://unpkg.com/@willyjl/ffmpeg.wasm-core-vidstab@0.11.4/dist/ffmpeg-core.js";
         isSingleThread = "main";
         const warning = document.getElementById("singlethread");
         warning.innerHTML = 'WARNING: Your browser <a href="https://caniuse.com/sharedarraybuffer" target="_blank">doesn\'t support multithreaded FFmpeg</a>,\
@@ -246,7 +246,7 @@ window.addEventListener("load", function () {
     };
 
     let ffmpeg;
-    import("https://unpkg.com/@ffmpeg/ffmpeg/dist/ffmpeg.min.js").then(function () {
+    import("https://unpkg.com/@ffmpeg/ffmpeg@0.11.6/dist/ffmpeg.min.js").then(function () {
         ffmpeg = FFmpeg.createFFmpeg({
             log: true,
             mainName: isSingleThread,
