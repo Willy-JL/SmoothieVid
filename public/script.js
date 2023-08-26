@@ -182,6 +182,7 @@ async function stabilize() {
                 });
             } catch (exc) {
                 show_error(exc, "Failed to load ffmpeg.wasm");
+                return;
             };
         };
 
