@@ -1,7 +1,7 @@
 // Module import URLs
-const ffmpeg_main = "/@ffmpeg/ffmpeg@0.12.5/dist/esm/index.js"; // Needs to be same domain, otherwise gets a DOMException for Worker()
-const ffmpeg_util = "https://unpkg.com/@ffmpeg/util@0.12.0/dist/esm/index.js";
-let ffmpeg_core = "https://unpkg.com/@willyjl/ffmpeg.wasm-core-vidstab-mt@0.12.2/dist/esm";
+const ffmpeg_main = "/@ffmpeg/ffmpeg@0.12.10/dist/esm/index.js"; // Needs to be same domain, otherwise gets a DOMException for Worker()
+const ffmpeg_util = "/@ffmpeg/util@0.12.1/dist/esm/index.js"; // Moved from UNPKG
+let ffmpeg_core = "/@willyjl/ffmpeg.wasm-core-vidstab-mt@0.12.6/dist/esm"; // Moved from UNPKG
 
 // Show warning and change core if multithreaded is not supported
 if (typeof SharedArrayBuffer === "undefined") {
