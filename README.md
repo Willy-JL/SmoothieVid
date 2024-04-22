@@ -1,4 +1,4 @@
-# SmoothieVid
+# [SmoothieVid](https://smoothievid.app/)
 Smoothen and stabilize videos in your browser!
 
 <video src="https://user-images.githubusercontent.com/49810075/187991683-68170208-a3dc-4730-9546-22c0b7a728c9.mp4"></video>
